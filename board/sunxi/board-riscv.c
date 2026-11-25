@@ -442,8 +442,19 @@ int board_late_init(void)
 
 int ft_board_setup(void *blob, struct bd_info *bd)
 {
+	u64 start[CONFIG_NR_DRAM_BANKS];
+	u64 size[CONFIG_NR_DRAM_BANKS];
+	int i;
+
 	setup_environment(blob);
 	fdt_fixup_ethernet(blob);
+
+	for (i = 0; i < CONFIG_NR_DRAM_BANKS; i++) {
+		start[i] = gd->bd->bi_dram[i].start;
+		size[i] = gd->bd->bi_dram[i].size;
+	}
+
+	fdt_fixup_memory_banks(blob, start, size, CONFIG_NR_DRAM_BANKS);
 
 	return 0;
 }
